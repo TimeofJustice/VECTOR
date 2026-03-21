@@ -1,0 +1,25 @@
+# Use an official Python runtime as a parent image
+FROM python:3.13-slim
+
+# Create a non-root user and set permissions
+RUN useradd -m -r appuser && \
+   mkdir /app && \
+   chown -R appuser /app
+
+RUN apt-get update && apt-get install -y libenchant-2-2
+
+# Set the working directory
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code
+COPY . .
+
+# Switch to non-root user
+USER appuser
+
+# Run migrations then start the bot
+CMD ["sh", "-c", "python migrate.py && python main.py"]

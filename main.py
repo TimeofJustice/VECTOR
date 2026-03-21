@@ -1,29 +1,35 @@
+# Copyright (c) 2026 Jonas Oelschner
+# Licensed under the MIT License. See LICENSE in the project root.
+
 import logging
 
-from services.bot_app import build_bot
+from services.bot import build
 from services.config import load_settings
-from services.database import close_database
+from services.database import init_database
 from utils.logger import setup_logging
 
 logger = logging.getLogger(__name__)
 
 
 def run() -> None:
+    """Main entry point for the application."""
     setup_logging()
 
+    # Load configuration
     settings = load_settings()
-    # init_database(settings)
-    # connect_database()
 
-    bot = build_bot(settings)
+    # Initialize database and create tables
+    db = init_database(settings)
 
-    logger.info('Starting bot process...')
-
+    # Build and run the bot
+    bot = build(settings)
+    logger.info("Starting bot process...")
     try:
         bot.run(settings.token)
     finally:
-        close_database()
+        # Ensure the database connection is closed on shutdown
+        db.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:17
+    profiles: ["production", "dev"]
+    command: >
+      postgres
+      -c listen_addresses=''
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - pg_socket:/var/run/postgresql
+    env_file:
+      - .env
+
+  discord-bot:
+    build:
+      context: .
+      dockerfile: .docker/dockerfile
+    image: ghcr.io/timeofjustice/vector:latest
+    profiles: ["production"]
+    container_name: vector
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      - pg_socket:/var/run/postgresql
+
+  discord-bot-dev:
+    build:
+      context: .
+      dockerfile: .docker/dockerfile.dev
+    profiles: ["dev"]
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      - pg_socket:/var/run/postgresql
+      - .:/app
+
+volumes:
+  postgres_data:
+  pg_socket:
+  dev_files:

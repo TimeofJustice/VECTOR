@@ -1,0 +1,6 @@
+{
+  "prerun": "import os\nfrom dotenv import load_dotenv\nfrom playhouse.postgres_ext import PostgresqlExtDatabase\nfrom services.database import db_proxy\nload_dotenv()\ndb = PostgresqlExtDatabase(os.getenv('POSTGRES_DB') or os.getenv('DATABASE_NAME', 'vector'), host=os.getenv('POSTGRES_HOST') or os.getenv('DATABASE_HOST', 'localhost'), port=int(os.getenv('POSTGRES_PORT') or os.getenv('DATABASE_PORT', 5432)), user=os.getenv('POSTGRES_USER') or os.getenv('DATABASE_USERNAME', 'vector'), password=os.getenv('POSTGRES_PASSWORD') or os.getenv('DATABASE_PASSWORD', 'vector'))\ndb_proxy.initialize(db)\ndb.connect()",
+  "directory": "migrations",
+  "history": "migratehistory",
+  "models": []
+}
