@@ -15,6 +15,7 @@ class Settings:
     postgres_port: int
     postgres_user: str
     postgres_password: str
+    giphy_api_key: str | None
     delay_bet_client_id: str | None
     delay_bet_client_secret: str | None
 
@@ -37,6 +38,9 @@ def load_settings() -> Settings:
     postgres_user = os.getenv("POSTGRES_USER") or os.getenv("DATABASE_USERNAME", "vector")
     postgres_password = os.getenv("POSTGRES_PASSWORD") or os.getenv("DATABASE_PASSWORD", "vector")
 
+    # Extract Giphy API key
+    giphy_api_key = os.getenv("GIPHY_API_KEY", None)
+
     # Extract Delay Bet API credentials
     delay_bet_client_id = os.getenv("DELAY_BET_CLIENT_ID", None)
     delay_bet_client_secret = os.getenv("DELAY_BET_CLIENT_SECRET", None)
@@ -48,6 +52,7 @@ def load_settings() -> Settings:
         postgres_port=postgres_port,
         postgres_user=postgres_user,
         postgres_password=postgres_password,
+        giphy_api_key=giphy_api_key,
         delay_bet_client_id=delay_bet_client_id,
         delay_bet_client_secret=delay_bet_client_secret,
     )

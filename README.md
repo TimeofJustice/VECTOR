@@ -49,6 +49,8 @@ TOKEN=your_discord_bot_token
 DATABASE_NAME=vector
 DATABASE_USERNAME=vector
 DATABASE_PASSWORD=changeme
+
+GIPHY_API_KEY=your_giphy_api_key
 ```
 
 ### 3. Run
@@ -172,3 +174,9 @@ That's it - restart the bot and your new feature is live.
 
 MIT - see [LICENSE](LICENSE).
 © 2026 Jonas Oelschner
+
+### Data Attribution
+
+GIF content is powered by [GIPHY](https://giphy.com) and is subject to the [GIPHY Terms of Service](https://www.giphy.com/terms).
+
+> Powered By GIPHY

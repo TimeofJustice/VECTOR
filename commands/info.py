@@ -13,7 +13,7 @@ from services.info_store import (
     get_running_time,
     get_version,
 )
-from utils.images import dominant_color
+from utils.images import dominant_color_form_asset
 
 _LOADING_MESSAGES = [
     "🔍 Interrogating the servers...",
@@ -45,7 +45,8 @@ def register_info_commands(bot: discord.Bot, settings: Settings) -> None:
         color = discord.Color.blurple()
         if bot.user and bot.user.avatar:
             try:
-                color = await dominant_color(bot.user.avatar)
+                color_rgb = await dominant_color_form_asset(bot.user.avatar)
+                color = discord.Color.from_rgb(*color_rgb)
             except Exception:
                 pass
 
