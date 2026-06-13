@@ -61,6 +61,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
+          export VERSION="$(date -u +'%Y.%m.%d')"
+          echo "Building image version $VERSION"
           docker compose --profile production build
           docker push ghcr.io/timeofjustice/vector:latest
 

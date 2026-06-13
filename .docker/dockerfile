@@ -18,6 +18,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code
 COPY . .
 
+# Bake the date-based build version (provided by the CI build) into the image
+ARG VERSION="unknown"
+ENV VERSION=$VERSION
+
 # Switch to non-root user
 USER appuser
 

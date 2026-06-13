@@ -46,14 +46,19 @@ def _run_git(*args: str) -> str | None:
 
 
 def get_version() -> str:
+    # A baked-in build version (set by the CI image build) is authoritative and
+    # bypasses the Redis cache; otherwise a stale value would survive deploys.
+    env_version = os.getenv("VERSION")
+    if env_version:
+        return env_version
+
     r = get_redis()
     cached = r.get(_KEY_VERSION)
     if cached is not None:
         return cached
 
     version = (
-        os.getenv("VERSION")
-        or _run_git("describe", "--tags", "--always")
+        _run_git("describe", "--tags", "--always")
         or _run_git("log", "-1", "--format=%cd", "--date=format:%Y.%m.%d")
         or "unknown"
     )

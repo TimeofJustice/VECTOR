@@ -24,6 +24,8 @@ services:
     build:
       context: .
       dockerfile: .docker/dockerfile
+      args:
+        VERSION: ${VERSION:-unknown}
     image: ghcr.io/timeofjustice/vector:latest
     profiles: ["production"]
     container_name: vector
