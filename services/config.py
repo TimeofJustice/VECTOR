@@ -33,10 +33,16 @@ def load_settings() -> Settings:
 
     # Extract database configuration with fallbacks
     postgres_db = os.getenv("POSTGRES_DB") or os.getenv("DATABASE_NAME", "vector")
-    postgres_host = os.getenv("POSTGRES_HOST") or os.getenv("DATABASE_HOST", "localhost")
+    postgres_host = os.getenv("POSTGRES_HOST") or os.getenv(
+        "DATABASE_HOST", "localhost"
+    )
     postgres_port = int(os.getenv("POSTGRES_PORT") or os.getenv("DATABASE_PORT", 5432))
-    postgres_user = os.getenv("POSTGRES_USER") or os.getenv("DATABASE_USERNAME", "vector")
-    postgres_password = os.getenv("POSTGRES_PASSWORD") or os.getenv("DATABASE_PASSWORD", "vector")
+    postgres_user = os.getenv("POSTGRES_USER") or os.getenv(
+        "DATABASE_USERNAME", "vector"
+    )
+    postgres_password = os.getenv("POSTGRES_PASSWORD") or os.getenv(
+        "DATABASE_PASSWORD", "vector"
+    )
 
     # Extract Giphy API key
     giphy_api_key = os.getenv("GIPHY_API_KEY", None)

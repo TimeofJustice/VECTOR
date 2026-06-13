@@ -35,7 +35,11 @@ def get_version() -> str:
 
         for x in result:
             if ".log" not in str(x):
-                dates.append(datetime.fromtimestamp(os.path.getmtime(os.getcwd() + "/" + str(x))).strftime("%Y.%m.%d"))
+                dates.append(
+                    datetime.fromtimestamp(
+                        os.path.getmtime(os.getcwd() + "/" + str(x))
+                    ).strftime("%Y.%m.%d")
+                )
 
         dates.sort(reverse=True)
 

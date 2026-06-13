@@ -12,7 +12,9 @@ GIPHY_SEARCH_URL = "https://api.giphy.com/v1/gifs/search"
 GIPHY_RANDOM_URL = "https://api.giphy.com/v1/gifs/random"
 
 
-async def search_gif(api_key: str, query: str | None = None, limit: int = 25) -> str | None:
+async def search_gif(
+    api_key: str, query: str | None = None, limit: int = 25
+) -> str | None:
     """Search Giphy for a GIF matching the query and return a random result URL."""
     offset = randint(0, 100)
 

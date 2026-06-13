@@ -41,7 +41,9 @@ def register_lifecycle_listeners(bot: discord.Bot, settings: Settings) -> None:
             for guild in bot.guilds:
                 logger.info("\t- %s\t%s", guild.name, guild.id)
 
-            bot._is_already_running = True  # Prevent this block from running again on reconnect
+            bot._is_already_running = (
+                True  # Prevent this block from running again on reconnect
+            )
 
             # Rotate the bot's status every 60 seconds
             status_index = 0
