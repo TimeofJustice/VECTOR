@@ -1,9 +1,12 @@
 aiohttp==3.13.3
+gTTS==2.5.4
+langdetect==1.0.9
 matplotlib==3.10.8
 peewee==4.0.1
 peewee_migrate==1.15.0
 Pillow==12.1.1
 psycopg2-binary==2.9.11
-py-cord==2.7.1
+py-cord @ git+https://github.com/Pycord-Development/pycord
 PyNaCl==1.6.2
 python-dotenv==1.2.2
+davey==0.1.3
