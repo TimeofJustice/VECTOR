@@ -9,14 +9,14 @@ from random import choice
 import discord
 
 from registration import listeners
-from services.config import Settings
-from services.info_store import (
+from commands.info import (
     get_description,
     get_running_time,
     get_status_messages,
     get_version,
     set_start_time,
 )
+from services.config import Settings
 
 logger = logging.getLogger(__name__)
 

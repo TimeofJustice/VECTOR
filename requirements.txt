@@ -10,3 +10,4 @@ py-cord @ git+https://github.com/Pycord-Development/pycord
 PyNaCl==1.6.2
 python-dotenv==1.2.2
 davey==0.1.3
+redis>=5.0.0

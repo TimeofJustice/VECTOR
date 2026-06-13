@@ -1,4 +1,9 @@
 services:
+  redis:
+    image: redis:7-alpine
+    profiles: ["production", "dev"]
+    restart: unless-stopped
+
   db:
     image: postgres:17
     profiles: ["production", "dev"]
@@ -25,8 +30,11 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      REDIS_URL: redis://redis:6379
     depends_on:
       - db
+      - redis
     volumes:
       - pg_socket:/var/run/postgresql
 
@@ -38,8 +46,11 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      REDIS_URL: redis://redis:6379
     depends_on:
       - db
+      - redis
     volumes:
       - pg_socket:/var/run/postgresql
       - .:/app
