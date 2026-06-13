@@ -8,6 +8,7 @@ import discord
 
 from registration import commands
 from services.config import Settings
+from services.i18n import localizations, user_translator
 from services.tts import generate_tts
 
 logger = logging.getLogger(__name__)
@@ -16,17 +17,23 @@ logger = logging.getLogger(__name__)
 @commands.register
 def register_tts_commands(bot: discord.Bot, settings: Settings) -> None:
     @bot.slash_command(
-        description="Join your voice channel and speak text aloud.", name="tts"
+        description="Join your voice channel and speak text aloud.",
+        name="tts",
+        description_localizations=localizations("commands.tts.description"),
     )
     async def tts(
         ctx: discord.ApplicationContext,
-        text: discord.Option(str, description="Text to speak", required=True),
+        text: discord.Option(
+            str,
+            description="Text to speak",
+            description_localizations=localizations("commands.tts.options.text"),
+            required=True,
+        ),
     ):
+        t = user_translator(ctx)
+
         if not ctx.author.voice or not ctx.author.voice.channel:
-            await ctx.respond(
-                "⚠️ You need to be in a voice channel first.",
-                ephemeral=True,
-            )
+            await ctx.respond(t("tts.need_voice"), ephemeral=True)
             return
 
         await ctx.defer(ephemeral=True)
@@ -36,7 +43,7 @@ def register_tts_commands(bot: discord.Bot, settings: Settings) -> None:
             audio_buf = await generate_tts(text)
         except Exception:
             logger.exception("Failed to generate TTS audio")
-            await ctx.followup.send("⚠️ Failed to generate TTS audio.", ephemeral=True)
+            await ctx.followup.send(t("tts.generate_failed"), ephemeral=True)
             return
 
         voice_channel = ctx.author.voice.channel
@@ -49,9 +56,7 @@ def register_tts_commands(bot: discord.Bot, settings: Settings) -> None:
             vc = await voice_channel.connect(reconnect=False)
         except Exception:
             logger.exception("Failed to connect to voice channel")
-            await ctx.followup.send(
-                "⚠️ Could not connect to your voice channel.", ephemeral=True
-            )
+            await ctx.followup.send(t("tts.connect_failed"), ephemeral=True)
             return
 
         try:
@@ -66,13 +71,11 @@ def register_tts_commands(bot: discord.Bot, settings: Settings) -> None:
 
             vc.play(source, after=after_playing)
             await ctx.followup.send(
-                f"🔊 Speaking in **{voice_channel.name}**.", ephemeral=True
+                t("tts.speaking", channel=voice_channel.name), ephemeral=True
             )
             await finished.wait()
         except Exception:
             logger.exception("Failed to play TTS audio")
-            await ctx.followup.send(
-                "⚠️ Something went wrong while playing TTS.", ephemeral=True
-            )
+            await ctx.followup.send(t("tts.play_failed"), ephemeral=True)
         finally:
             await vc.disconnect()

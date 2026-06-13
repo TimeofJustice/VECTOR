@@ -1,0 +1,67 @@
+{
+  "commands": {
+    "info": {
+      "name": "info",
+      "description": "Show information about the bot."
+    },
+    "gif": {
+      "name": "gif",
+      "description": "Get a GIF (Powered by GIPHY)",
+      "user_command_name": "Random GIF (Powered by GIPHY)",
+      "options": {
+        "query": "What to search for"
+      }
+    },
+    "tts": {
+      "name": "tts",
+      "description": "Join your voice channel and speak text aloud.",
+      "options": {
+        "text": "Text to speak"
+      }
+    },
+    "language": {
+      "name": "language",
+      "description": "Set the server language.",
+      "options": {
+        "language": "The language to use"
+      }
+    }
+  },
+  "info": {
+    "loading": [
+      "🔍 Interrogating the servers...",
+      "🧮 Counting pixels on the avatar...",
+      "📡 Bribing Discord API for data...",
+      "🧪 Running totally real diagnostics...",
+      "🗂️ Dusting off the version number...",
+      "⏱️ Asking the clock how long we've been alive...",
+      "🎨 Stealing colors from the avatar...",
+      "🤖 Pretending to do important calculations...",
+      "📊 Making numbers look impressive...",
+      "🧠 Loading brain cells... found 2..."
+    ],
+    "title": "⚡ {name}",
+    "field_version": "📦 Version",
+    "field_uptime": "🕐 Uptime",
+    "field_users": "🫂 Users",
+    "field_users_value": "{users} users in {guilds} guilds",
+    "field_latency": "🏓 Latency",
+    "field_developer": "🧑🏼‍💻 Developer",
+    "footer": "Powered by V.E.C.T.O.R."
+  },
+  "gif": {
+    "error_title": "Error",
+    "no_results": "😕 No GIFs found"
+  },
+  "tts": {
+    "need_voice": "⚠️ You need to be in a voice channel first.",
+    "generate_failed": "⚠️ Failed to generate TTS audio.",
+    "connect_failed": "⚠️ Could not connect to your voice channel.",
+    "speaking": "🔊 Speaking in **{channel}**.",
+    "play_failed": "⚠️ Something went wrong while playing TTS."
+  },
+  "language": {
+    "updated": "✅ Server language set to **{language}**.",
+    "not_admin": "⛔ You need administrator permissions."
+  }
+}

@@ -8,6 +8,7 @@ import discord
 from registration import commands
 from services.config import Settings
 from services.gif import random_gif, search_gif
+from services.i18n import guild_translator, localizations
 from utils.images import dominant_color_from_url
 
 logger = logging.getLogger(__name__)
@@ -28,14 +29,13 @@ async def _build_command_response(url: str) -> discord.Embed:
     return embed
 
 
-async def _build_error_response(message: str) -> discord.Embed:
+async def _build_error_response(t, message_key: str) -> discord.Embed:
     """Helper to build a consistent error embed response."""
-    embed = discord.Embed(
-        title="Error",
-        description=message,
+    return discord.Embed(
+        title=t("gif.error_title"),
+        description=t(message_key),
         color=discord.Color.red(),
     )
-    return embed
 
 
 @commands.register
@@ -44,12 +44,21 @@ def register_gif_commands(bot: discord.Bot, settings: Settings) -> None:
         logger.warning("Giphy API key not found. GIF commands will be disabled.")
         return
 
-    @bot.slash_command(description="Get a GIF (Powered by GIPHY)")
+    @bot.slash_command(
+        description="Get a GIF (Powered by GIPHY)",
+        description_localizations=localizations("commands.gif.description"),
+    )
     async def gif(
         ctx: discord.ApplicationContext,
-        query: discord.Option(str, description="What to search for", required=False),
+        query: discord.Option(
+            str,
+            description="What to search for",
+            description_localizations=localizations("commands.gif.options.query"),
+            required=False,
+        ),
     ):
         await ctx.defer()
+        t = await guild_translator(ctx)
 
         if not query:
             url = await random_gif(settings.giphy_api_key)
@@ -59,19 +68,23 @@ def register_gif_commands(bot: discord.Bot, settings: Settings) -> None:
         if url:
             embed = await _build_command_response(url)
         else:
-            embed = await _build_error_response("😕 No GIFs found")
+            embed = await _build_error_response(t, "gif.no_results")
 
         await ctx.followup.send(embed=embed)
 
-    @bot.user_command(name="Random GIF (Powered by GIPHY)")
+    @bot.user_command(
+        name="Random GIF (Powered by GIPHY)",
+        name_localizations=localizations("commands.gif.user_command_name"),
+    )
     async def user_random_gif(ctx: discord.ApplicationContext, user: discord.Member):
         await ctx.defer()
+        t = await guild_translator(ctx)
 
         url = await random_gif(settings.giphy_api_key)
 
         if url:
             embed = await _build_command_response(url)
         else:
-            embed = await _build_error_response("😕 No GIFs found")
+            embed = await _build_error_response(t, "gif.no_results")
 
         await ctx.followup.send(embed=embed)

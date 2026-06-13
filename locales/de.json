@@ -1,0 +1,67 @@
+{
+  "commands": {
+    "info": {
+      "name": "info",
+      "description": "Zeigt Informationen über den Bot."
+    },
+    "gif": {
+      "name": "gif",
+      "description": "Hol dir ein GIF (Powered by GIPHY)",
+      "user_command_name": "Zufalls-GIF (Powered by GIPHY)",
+      "options": {
+        "query": "Wonach gesucht werden soll"
+      }
+    },
+    "tts": {
+      "name": "tts",
+      "description": "Tritt deinem Sprachkanal bei und liest Text vor.",
+      "options": {
+        "text": "Vorzulesender Text"
+      }
+    },
+    "language": {
+      "name": "language",
+      "description": "Stellt die Serversprache ein.",
+      "options": {
+        "language": "Die zu verwendende Sprache"
+      }
+    }
+  },
+  "info": {
+    "loading": [
+      "🔍 Server werden befragt...",
+      "🧮 Pixel im Avatar werden gezählt...",
+      "📡 Discord-API wird bestochen...",
+      "🧪 Völlig echte Diagnosen laufen...",
+      "🗂️ Versionsnummer wird entstaubt...",
+      "⏱️ Die Uhr wird nach der Laufzeit gefragt...",
+      "🎨 Farben werden aus dem Avatar geklaut...",
+      "🤖 Wichtige Berechnungen werden vorgetäuscht...",
+      "📊 Zahlen werden beeindruckend gemacht...",
+      "🧠 Gehirnzellen werden geladen... 2 gefunden..."
+    ],
+    "title": "⚡ {name}",
+    "field_version": "📦 Version",
+    "field_uptime": "🕐 Laufzeit",
+    "field_users": "🫂 Nutzer",
+    "field_users_value": "{users} Nutzer in {guilds} Servern",
+    "field_latency": "🏓 Latenz",
+    "field_developer": "🧑🏼‍💻 Entwickler",
+    "footer": "Powered by V.E.C.T.O.R."
+  },
+  "gif": {
+    "error_title": "Fehler",
+    "no_results": "😕 Keine GIFs gefunden"
+  },
+  "tts": {
+    "need_voice": "⚠️ Du musst zuerst in einem Sprachkanal sein.",
+    "generate_failed": "⚠️ TTS-Audio konnte nicht erzeugt werden.",
+    "connect_failed": "⚠️ Konnte deinem Sprachkanal nicht beitreten.",
+    "speaking": "🔊 Spreche in **{channel}**.",
+    "play_failed": "⚠️ Beim Abspielen von TTS ist etwas schiefgelaufen."
+  },
+  "language": {
+    "updated": "✅ Serversprache auf **{language}** gesetzt.",
+    "not_admin": "⛔ Du brauchst Administrator-Rechte."
+  }
+}

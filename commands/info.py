@@ -12,6 +12,8 @@ import discord
 
 from registration import commands
 from services.config import Settings
+from services.guild_settings import get_language
+from services.i18n import guild_translator, localizations, translate_list
 from services.redis_client import get_redis
 from utils.images import dominant_color_form_asset
 
@@ -19,19 +21,6 @@ _KEY_START_TIME = "bot:start_time"
 _KEY_VERSION = "bot:version"
 _KEY_DESCRIPTION = "bot:description"
 _KEY_STATUS_MESSAGES = "bot:status_messages"
-
-_LOADING_MESSAGES = [
-    "🔍 Interrogating the servers...",
-    "🧮 Counting pixels on the avatar...",
-    "📡 Bribing Discord API for data...",
-    "🧪 Running totally real diagnostics...",
-    "🗂️ Dusting off the version number...",
-    "⏱️ Asking the clock how long we've been alive...",
-    "🎨 Stealing colors from the avatar...",
-    "🤖 Pretending to do important calculations...",
-    "📊 Making numbers look impressive...",
-    "🧠 Loading brain cells... found 2...",
-]
 
 
 def set_start_time(time: datetime) -> None:
@@ -125,10 +114,15 @@ def get_status_messages() -> list[str]:
 
 @commands.register
 def register_info_commands(bot: discord.Bot, settings: Settings) -> None:
-    @bot.slash_command(description="Show information about the bot.")
+    @bot.slash_command(
+        description="Show information about the bot.",
+        description_localizations=localizations("commands.info.description"),
+    )
     async def info(ctx: discord.ApplicationContext):
+        t = await guild_translator(ctx)
+
         # Show a random loading message while gathering info
-        messages = _LOADING_MESSAGES.copy()
+        messages = translate_list("info.loading", get_language(ctx.guild_id))
         shuffle(messages)
         await ctx.respond(messages[0])
 
@@ -146,29 +140,33 @@ def register_info_commands(bot: discord.Bot, settings: Settings) -> None:
 
         # Create the embed with bot info
         embed = discord.Embed(
-            title=f"⚡ {bot.user.name}",
+            title=t("info.title", name=bot.user.name),
             description=get_description(),
             color=color,
             timestamp=datetime.now(),
         )
 
-        embed.add_field(name="📦 Version", value=get_version(), inline=True)
-        embed.add_field(name="🕐 Uptime", value=get_running_time(), inline=True)
+        embed.add_field(name=t("info.field_version"), value=get_version(), inline=True)
         embed.add_field(
-            name="🫂 Users",
-            value=f"{total_users} users in {guild_count} guilds",
+            name=t("info.field_uptime"), value=get_running_time(), inline=True
+        )
+        embed.add_field(
+            name=t("info.field_users"),
+            value=t("info.field_users_value", users=total_users, guilds=guild_count),
             inline=True,
         )
         embed.add_field(
-            name="🏓 Latency",
+            name=t("info.field_latency"),
             value=f"{round(bot.latency * 1000)}ms",
             inline=True,
         )
-        embed.add_field(name="🧑🏼‍💻 Developer", value="TimeofJustice", inline=True)
+        embed.add_field(
+            name=t("info.field_developer"), value="TimeofJustice", inline=True
+        )
 
         if bot.user and bot.user.avatar:
             embed.set_thumbnail(url=bot.user.avatar.url)
 
-        embed.set_footer(text="Powered by V.E.C.T.O.R.")
+        embed.set_footer(text=t("info.footer"))
 
         await ctx.edit(embed=embed, content=None)

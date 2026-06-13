@@ -3,6 +3,10 @@ name = "VECTOR"
 version = "1.0.0"
 requires-python = ">=3.12"
 
+[tool.ruff]
+# Exclude migration files from linting and formatting.
+extend-exclude = ["migrations"]
+
 [tool.ruff.lint]
 # 1. Enable flake8-bugbear (`B`) rules, in addition to the defaults.
 select = ["E4", "E7", "E9", "F", "B"]
