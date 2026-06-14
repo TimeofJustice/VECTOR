@@ -1,11 +1,13 @@
 # Copyright (c) 2026 Jonas Oelschner
 # Licensed under the MIT License. See LICENSE in the project root.
 
+from typing import Annotated
+
 import discord
 
 from registration import commands
 from services.config import Settings
-from services.i18n import guild_translator, localizations, user_translator
+from services.i18n import describe, named, user_translator, with_translator
 from services.quotes import (
     add_quote,
     delete_quote,
@@ -68,8 +70,7 @@ class QuoteModal(discord.ui.Modal):
         )
 
 
-async def _send_quote_embed(ctx, quote) -> None:
-    t = await guild_translator(ctx)
+async def _send_quote_embed(ctx, quote, t) -> None:
     guild = ctx.guild
 
     quoted = guild.get_member(quote.user)
@@ -112,26 +113,25 @@ async def _send_quote_embed(ctx, quote) -> None:
 def register_quote_commands(bot: discord.Bot, settings: Settings) -> None:
     quote_group = bot.create_group(
         "quote",
-        "Save and recall memorable quotes.",
-        description_localizations=localizations("commands.quote.description"),
+        **describe("commands.quote.description"),
         guild_only=True,
     )
 
     @quote_group.command(
         name="view",
-        description="Show a random quote, or a specific one by its number.",
-        description_localizations=localizations("commands.quote.view_description"),
+        **describe("commands.quote.view_description"),
     )
+    @with_translator
     async def view(
         ctx: discord.ApplicationContext,
-        number: discord.Option(
-            int,
-            description="The quote number",
-            description_localizations=localizations("commands.quote.options.number"),
+        number: int = discord.Option(
+            **describe("commands.quote.options.number"),
             required=False,
         ),
+        *,
+        t,
+        tg,
     ):
-        t = await guild_translator(ctx)
         if number is None:
             quote = random_quote(ctx.guild_id)
             if quote is None:
@@ -142,41 +142,44 @@ def register_quote_commands(bot: discord.Bot, settings: Settings) -> None:
             if quote is None:
                 await ctx.respond(t("quote.not_found", number=number), ephemeral=True)
                 return
-        await _send_quote_embed(ctx, quote)
+
+        await _send_quote_embed(ctx, quote, tg)
 
     @quote_group.command(
         name="add",
-        description="Add a quote for a user.",
-        description_localizations=localizations("commands.quote.add_description"),
+        **describe("commands.quote.add_description"),
     )
+    @with_translator
     async def add(
         ctx: discord.ApplicationContext,
-        user: discord.Option(
+        user: Annotated[
             discord.Member,
-            description="Who said it",
-            description_localizations=localizations("commands.quote.options.user"),
-        ),
+            discord.Option(
+                **describe("commands.quote.options.user"),
+            ),
+        ],
+        *,
+        t,
     ):
-        t = user_translator(ctx)
         if user.bot:
             await ctx.respond(t("quote.no_bots"), ephemeral=True)
             return
+
         await ctx.send_modal(QuoteModal(user, t))
 
     @quote_group.command(
         name="remove",
-        description="Remove a quote by its number.",
-        description_localizations=localizations("commands.quote.remove_description"),
+        **describe("commands.quote.remove_description"),
     )
+    @with_translator
     async def remove(
         ctx: discord.ApplicationContext,
-        number: discord.Option(
-            int,
-            description="The quote number",
-            description_localizations=localizations("commands.quote.options.number"),
+        number: int = discord.Option(
+            **describe("commands.quote.options.number"),
         ),
+        *,
+        t,
     ):
-        t = user_translator(ctx)
         quote = get_quote(ctx.guild_id, number)
         if quote is None:
             await ctx.respond(t("quote.not_found", number=number), ephemeral=True)
@@ -192,12 +195,13 @@ def register_quote_commands(bot: discord.Bot, settings: Settings) -> None:
         await ctx.respond(t("quote.removed", number=number), ephemeral=True)
 
     @bot.message_command(
-        name="Quote this",
-        name_localizations=localizations("commands.quote.message_command_name"),
+        **named("commands.quote.message_command_name"),
         guild_only=True,
     )
-    async def quote_this(ctx: discord.ApplicationContext, message: discord.Message):
-        t = user_translator(ctx)
+    @with_translator
+    async def quote_this(
+        ctx: discord.ApplicationContext, message: discord.Message, *, t
+    ):
         if message.author.bot:
             await ctx.respond(t("quote.no_bots"), ephemeral=True)
             return
@@ -211,28 +215,32 @@ def register_quote_commands(bot: discord.Bot, settings: Settings) -> None:
         )
 
     @bot.user_command(
-        name="Add Quote",
-        name_localizations=localizations("commands.quote.user_command_name"),
+        **named("commands.quote.user_command_name"),
         guild_only=True,
     )
-    async def add_quote_user(ctx: discord.ApplicationContext, member: discord.Member):
-        t = user_translator(ctx)
+    @with_translator
+    async def add_quote_user(
+        ctx: discord.ApplicationContext, member: discord.Member, *, t
+    ):
         if member.bot:
             await ctx.respond(t("quote.no_bots"), ephemeral=True)
             return
+
         await ctx.send_modal(QuoteModal(member, t))
 
     @bot.user_command(
-        name="Get Quote",
-        name_localizations=localizations("commands.quote.get_user_command_name"),
+        **named("commands.quote.get_user_command_name"),
         guild_only=True,
     )
-    async def get_quote_user(ctx: discord.ApplicationContext, member: discord.Member):
-        t = await guild_translator(ctx)
+    @with_translator
+    async def get_quote_user(
+        ctx: discord.ApplicationContext, member: discord.Member, *, t, tg
+    ):
         quote = random_quote_for_user(ctx.guild_id, member.id)
         if quote is None:
             await ctx.respond(
                 t("quote.none_for_user", user=member.display_name), ephemeral=True
             )
             return
-        await _send_quote_embed(ctx, quote)
+
+        await _send_quote_embed(ctx, quote, tg)

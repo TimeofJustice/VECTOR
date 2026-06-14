@@ -4,7 +4,6 @@
 import ast
 import json
 import os
-import subprocess
 from datetime import datetime
 from random import shuffle
 
@@ -13,7 +12,7 @@ import discord
 from registration import commands
 from services.config import Settings
 from services.guild_settings import get_language
-from services.i18n import guild_translator, localizations, translate_list
+from services.i18n import describe, guild_translator, translate_list
 from services.redis_client import get_redis
 from utils.images import dominant_color_form_asset
 
@@ -32,39 +31,17 @@ def get_start_time() -> datetime | None:
     return datetime.fromisoformat(value) if value else None
 
 
-def _run_git(*args: str) -> str | None:
-    try:
-        result = subprocess.run(
-            ["git", *args],
-            capture_output=True,
-            text=True,
-            timeout=5,
-        )
-        return result.stdout.strip() if result.returncode == 0 else None
-    except (subprocess.SubprocessError, FileNotFoundError):
-        return None
-
-
-def get_version() -> str:
-    # A baked-in build version (set by the CI image build) is authoritative and
-    # bypasses the Redis cache; otherwise a stale value would survive deploys.
+async def get_version(ctx: discord.ApplicationContext = None) -> str:
+    # A baked-in build version (set by the CI image build) is authoritative
     env_version = os.getenv("VERSION")
     if env_version:
         return env_version
 
-    r = get_redis()
-    cached = r.get(_KEY_VERSION)
-    if cached is not None:
-        return cached
-
-    version = (
-        _run_git("describe", "--tags", "--always")
-        or _run_git("log", "-1", "--format=%cd", "--date=format:%Y.%m.%d")
-        or "unknown"
-    )
-
-    r.set(_KEY_VERSION, version)
-    return version
+    if ctx is not None:
+        t = await guild_translator(ctx)
+        return t("general.unknown")
+    else:
+        return "Unknown"
 
 
 def get_running_time() -> str:
@@ -120,8 +97,7 @@ def get_status_messages() -> list[str]:
 @commands.register
 def register_info_commands(bot: discord.Bot, settings: Settings) -> None:
     @bot.slash_command(
-        description="Show information about the bot.",
-        description_localizations=localizations("commands.info.description"),
+        **describe("commands.info.description"),
     )
     async def info(ctx: discord.ApplicationContext):
         t = await guild_translator(ctx)
@@ -151,7 +127,9 @@ def register_info_commands(bot: discord.Bot, settings: Settings) -> None:
             timestamp=datetime.now(),
         )
 
-        embed.add_field(name=t("info.field_version"), value=get_version(), inline=True)
+        embed.add_field(
+            name=t("info.field_version"), value=await get_version(ctx), inline=True
+        )
         embed.add_field(
             name=t("info.field_uptime"), value=get_running_time(), inline=True
         )

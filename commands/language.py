@@ -6,7 +6,7 @@ import discord
 from registration import commands
 from services.config import Settings
 from services.guild_settings import set_language
-from services.i18n import localizations, user_translator
+from services.i18n import describe, with_translator
 
 _DISPLAY = {"en": "English", "de": "Deutsch"}
 
@@ -15,27 +15,25 @@ _DISPLAY = {"en": "English", "de": "Deutsch"}
 def register_language_commands(bot: discord.Bot, settings: Settings) -> None:
     @bot.slash_command(
         name="language",
-        description="Set the server language.",
-        description_localizations=localizations("commands.language.description"),
+        **describe("commands.language.description"),
         default_member_permissions=discord.Permissions(administrator=True),
         guild_only=True,
     )
+    @with_translator
     async def language(
         ctx: discord.ApplicationContext,
-        language: discord.Option(
-            str,
-            description="The language to use",
-            description_localizations=localizations(
-                "commands.language.options.language"
-            ),
+        language: str = discord.Option(
+            **describe("commands.language.options.language"),
             choices=[
                 discord.OptionChoice(name="English", value="en"),
                 discord.OptionChoice(name="Deutsch", value="de"),
             ],
         ),
+        *,
+        t,
     ):
         set_language(ctx.guild_id, language)
-        t = user_translator(ctx)
+
         await ctx.respond(
             t("language.updated", language=_DISPLAY.get(language, language)),
             ephemeral=True,

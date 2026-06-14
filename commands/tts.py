@@ -8,8 +8,9 @@ import discord
 
 from registration import commands
 from services.config import Settings
-from services.i18n import localizations, user_translator
+from services.i18n import describe, with_translator
 from services.tts import generate_tts
+from utils.cooldowns import throttle
 
 logger = logging.getLogger(__name__)
 
@@ -17,21 +18,20 @@ logger = logging.getLogger(__name__)
 @commands.register
 def register_tts_commands(bot: discord.Bot, settings: Settings) -> None:
     @bot.slash_command(
-        description="Join your voice channel and speak text aloud.",
         name="tts",
-        description_localizations=localizations("commands.tts.description"),
+        **describe("commands.tts.description"),
     )
+    @throttle(minutes=5, concurrency=1)
+    @with_translator
     async def tts(
         ctx: discord.ApplicationContext,
-        text: discord.Option(
-            str,
-            description="Text to speak",
-            description_localizations=localizations("commands.tts.options.text"),
+        text: str = discord.Option(
+            **describe("commands.tts.options.text"),
             required=True,
         ),
+        *,
+        t,
     ):
-        t = user_translator(ctx)
-
         if not ctx.author.voice or not ctx.author.voice.channel:
             await ctx.respond(t("tts.need_voice"), ephemeral=True)
             return

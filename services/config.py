@@ -18,6 +18,7 @@ class Settings:
     giphy_api_key: str | None
     delay_bet_client_id: str | None
     delay_bet_client_secret: str | None
+    developer_user_id: int | None
 
 
 def load_settings() -> Settings:
@@ -51,6 +52,11 @@ def load_settings() -> Settings:
     delay_bet_client_id = os.getenv("DELAY_BET_CLIENT_ID", None)
     delay_bet_client_secret = os.getenv("DELAY_BET_CLIENT_SECRET", None)
 
+    # Discord user ID that receives a DM with the details of unhandled runtime
+    # errors. Left unset disables the notifications.
+    developer_user_id_raw = os.getenv("DEVELOPER_USER_ID")
+    developer_user_id = int(developer_user_id_raw) if developer_user_id_raw else None
+
     return Settings(
         token=token,
         postgres_db=postgres_db,
@@ -61,4 +67,5 @@ def load_settings() -> Settings:
         giphy_api_key=giphy_api_key,
         delay_bet_client_id=delay_bet_client_id,
         delay_bet_client_secret=delay_bet_client_secret,
+        developer_user_id=developer_user_id,
     )

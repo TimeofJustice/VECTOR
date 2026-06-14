@@ -8,7 +8,6 @@ from random import choice
 
 import discord
 
-from registration import listeners
 from commands.info import (
     get_description,
     get_running_time,
@@ -16,6 +15,7 @@ from commands.info import (
     get_version,
     set_start_time,
 )
+from registration import listeners
 from services.config import Settings
 
 logger = logging.getLogger(__name__)
@@ -68,7 +68,7 @@ def register_lifecycle_listeners(bot: discord.Bot, settings: Settings) -> None:
                     },
                     {
                         "emoji": "📦",
-                        "text": f"Version {get_version()}",
+                        "text": f"Version {await get_version()}",
                     },
                     {
                         "emoji": "🧑🏼‍💻",

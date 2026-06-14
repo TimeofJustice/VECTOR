@@ -1,44 +1,39 @@
 {
   "commands": {
     "info": {
-      "name": "info",
-      "description": "Zeigt Informationen über den Bot."
+      "description": "Zeigt Informationen über den Bot"
     },
     "gif": {
-      "name": "gif",
       "description": "Hol dir ein GIF (Powered by GIPHY)",
       "user_command_name": "Zufalls-GIF (Powered by GIPHY)",
       "options": {
-        "query": "Wonach gesucht werden soll"
+        "query": "Was für ein GIF suchst du?"
       }
     },
     "tts": {
-      "name": "tts",
-      "description": "Tritt deinem Sprachkanal bei und liest Text vor.",
+      "description": "Tritt deinem Sprachkanal bei und liest Text vor",
       "options": {
         "text": "Vorzulesender Text"
       }
     },
     "language": {
-      "name": "language",
-      "description": "Stellt die Serversprache ein.",
+      "description": "Stellt die Serversprache ein",
       "options": {
         "language": "Die zu verwendende Sprache"
       }
     },
     "quote": {
-      "name": "quote",
-      "description": "Speichere und rufe denkwürdige Zitate ab.",
-      "view_description": "Zeige ein zufälliges Zitat oder ein bestimmtes anhand seiner Nummer.",
-      "add_description": "Füge ein Zitat für einen Nutzer hinzu.",
-      "remove_description": "Entferne ein Zitat anhand seiner Nummer.",
+      "description": "Speichere und rufe denkwürdige Zitate ab",
+      "view_description": "Zeige ein zufälliges Zitat oder ein bestimmtes anhand seiner Nummer",
+      "add_description": "Füge ein Zitat für einen Nutzer hinzu",
+      "remove_description": "Entferne ein Zitat anhand seiner Nummer",
       "options": {
         "number": "Die Zitatnummer",
         "user": "Wer es gesagt hat"
       },
       "message_command_name": "Zitieren",
       "user_command_name": "Zitat hinzufügen",
-      "get_user_command_name": "Zitat anzeigen"
+      "get_user_command_name": "Zufallszitat anzeigen"
     }
   },
   "info": {
@@ -68,15 +63,14 @@
     "no_results": "😕 Keine GIFs gefunden"
   },
   "tts": {
-    "need_voice": "⚠️ Du musst zuerst in einem Sprachkanal sein.",
-    "generate_failed": "⚠️ TTS-Audio konnte nicht erzeugt werden.",
-    "connect_failed": "⚠️ Konnte deinem Sprachkanal nicht beitreten.",
-    "speaking": "🔊 Spreche in **{channel}**.",
-    "play_failed": "⚠️ Beim Abspielen von TTS ist etwas schiefgelaufen."
+    "need_voice": "⚠️ Du musst zuerst in einem Sprachkanal sein",
+    "generate_failed": "⚠️ TTS-Audio konnte nicht erzeugt werden",
+    "connect_failed": "⚠️ Konnte deinem Sprachkanal nicht beitreten",
+    "speaking": "🔊 Spreche in **{channel}**",
+    "play_failed": "⚠️ Beim Abspielen von TTS ist etwas schiefgelaufen"
   },
   "language": {
-    "updated": "✅ Serversprache auf **{language}** gesetzt.",
-    "not_admin": "⛔ Du brauchst Administrator-Rechte."
+    "updated": "✅ Serversprache auf **{language}** gesetzt"
   },
   "quote": {
     "modal_title": "Zitat",
@@ -84,16 +78,23 @@
     "modal_quote_placeholder": "Wie lautet das Zitat?",
     "modal_year_label": "Jahr",
     "modal_year_placeholder": "Aus welchem Jahr?",
-    "added": "✅ Zitat hinzugefügt. `#{number}`",
-    "removed": "🗑️ Zitat #{number} entfernt.",
-    "not_found": "❓ Zitat #{number} existiert nicht.",
-    "none_yet": "😶 Es gibt noch keine Zitate.",
-    "none_for_user": "😶 Es gibt noch keine Zitate für {user}.",
-    "year_must_be_number": "⚠️ Das Jahr muss eine Zahl sein.",
-    "no_bots": "🤖 Bots können nicht zitiert werden.",
-    "not_allowed": "⛔ Nur wer das Zitat hinzugefügt hat oder ein Admin kann es entfernen.",
+    "added": "✅ Zitat hinzugefügt: `#{number}`",
+    "removed": "🗑️ Zitat #{number} entfernt",
+    "not_found": "❓ Zitat #{number} existiert nicht",
+    "none_yet": "😶 Es gibt noch keine Zitate",
+    "none_for_user": "😶 Es gibt noch keine Zitate für {user}",
+    "year_must_be_number": "⚠️ Das Jahr muss eine Zahl sein",
+    "no_bots": "🤖 Bots können nicht zitiert werden",
+    "not_allowed": "⛔ Nur wer das Zitat hinzugefügt hat, oder ein Admin kann es entfernen",
     "unknown_user": "Unbekannter Nutzer",
     "footer": "#{number} hinzugefügt von {author}",
-    "footer_unknown_author": "#{number} hinzugefügt von Unbekannter Nutzer"
+    "footer_unknown_author": "#{number} hinzugefügt von Unbekanntem Nutzer"
+  },
+  "errors": {
+    "cooldown": "⏳ Nicht so schnell! Versuch's in `{seconds}s` nochmal.",
+    "max_concurrency": "🚧 Dieser Befehl läuft auf diesem Server gerade schon. Bitte warte, bis er fertig ist."
+  },
+  "general": {
+    "unknown": "Unbekannt"
   }
 }
