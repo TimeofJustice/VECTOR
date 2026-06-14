@@ -81,14 +81,15 @@
     "added": "✅ Quote added: `#{number}`",
     "removed": "🗑️ Quote #{number} removed",
     "not_found": "❓ Quote #{number} does not exist",
+    "not_found_generic": "❓ That quote no longer exists",
     "none_yet": "😶 There are no quotes yet",
     "none_for_user": "😶 There are no quotes for {user} yet",
     "year_must_be_number": "⚠️ The year must be a number",
     "no_bots": "🤖 Bots can't be quoted",
     "not_allowed": "⛔ Only the person who added this quote, or an admin, can remove it",
     "unknown_user": "Unknown User",
-    "footer": "#{number} added by {author}",
-    "footer_unknown_author": "#{number} added by Unknown User"
+    "footer": "#{number} added by {author} • 👁️ {views}",
+    "footer_unknown_author": "#{number} added by Unknown User • 👁️ {views}"
   },
   "errors": {
     "cooldown": "⏳ Slow down! Try again in `{seconds}s`.",

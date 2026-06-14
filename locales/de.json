@@ -81,14 +81,15 @@
     "added": "✅ Zitat hinzugefügt: `#{number}`",
     "removed": "🗑️ Zitat #{number} entfernt",
     "not_found": "❓ Zitat #{number} existiert nicht",
+    "not_found_generic": "❓ Dieses Zitat existiert nicht mehr",
     "none_yet": "😶 Es gibt noch keine Zitate",
     "none_for_user": "😶 Es gibt noch keine Zitate für {user}",
     "year_must_be_number": "⚠️ Das Jahr muss eine Zahl sein",
     "no_bots": "🤖 Bots können nicht zitiert werden",
     "not_allowed": "⛔ Nur wer das Zitat hinzugefügt hat, oder ein Admin kann es entfernen",
     "unknown_user": "Unbekannter Nutzer",
-    "footer": "#{number} hinzugefügt von {author}",
-    "footer_unknown_author": "#{number} hinzugefügt von Unbekanntem Nutzer"
+    "footer": "#{number} hinzugefügt von {author} • 👁️ {views}",
+    "footer_unknown_author": "#{number} hinzugefügt von Unbekanntem Nutzer • 👁️ {views}"
   },
   "errors": {
     "cooldown": "⏳ Nicht so schnell! Versuch's in `{seconds}s` nochmal.",

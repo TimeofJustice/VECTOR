@@ -6,6 +6,7 @@ from datetime import datetime
 from peewee import (
     BigIntegerField,
     DateTimeField,
+    ForeignKeyField,
     IntegerField,
     TextField,
 )
@@ -22,7 +23,18 @@ class Quote(ModelBase):
     author = BigIntegerField(null=True)  # who added it
     quote = TextField()
     year = IntegerField()
+    views = IntegerField(default=0)  # how often the quote has been displayed
     created_at = DateTimeField(default=datetime.now)
 
     class Meta:
         indexes = ((("guild_id", "number"), True),)  # unique per guild
+
+
+@models.register
+class QuoteLike(ModelBase):
+    quote = ForeignKeyField(Quote, backref="likes", on_delete="CASCADE")
+    user = BigIntegerField()  # who liked the quote
+    created_at = DateTimeField(default=datetime.now)
+
+    class Meta:
+        indexes = ((("quote", "user"), True),)  # one like per user per quote

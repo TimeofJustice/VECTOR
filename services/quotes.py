@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from peewee import fn
 
-from models.quote import Quote
+from models.quote import Quote, QuoteLike
 from services.database import db_proxy
 
 
@@ -62,3 +62,48 @@ def delete_quote(guild_id: int, number: int) -> bool:
         .execute()
     )
     return deleted > 0
+
+
+def increment_views(quote: Quote) -> int:
+    """Atomically bump a quote's view count and return the new total.
+
+    The in-memory ``quote`` instance is updated too, so the caller can render
+    the fresh count without re-fetching the row.
+    """
+    Quote.update(views=Quote.views + 1).where(Quote.id == quote.id).execute()
+    quote.views = (quote.views or 0) + 1
+    return quote.views
+
+
+def like_count(quote: Quote) -> int:
+    """Return how many distinct users have liked a quote."""
+    return QuoteLike.select().where(QuoteLike.quote == quote.id).count()
+
+
+def has_liked(quote: Quote, user_id: int) -> bool:
+    """Return True if the given user has already liked the quote."""
+    return (
+        QuoteLike.select()
+        .where((QuoteLike.quote == quote.id) & (QuoteLike.user == user_id))
+        .exists()
+    )
+
+
+def toggle_like(quote: Quote, user_id: int) -> tuple[bool, int]:
+    """Add or remove a user's like on a quote.
+
+    Returns ``(liked_now, total_likes)`` where ``liked_now`` is True if the like
+    was just added, False if it was removed.
+    """
+    with db_proxy.atomic():
+        existing = QuoteLike.get_or_none(
+            (QuoteLike.quote == quote.id) & (QuoteLike.user == user_id)
+        )
+        if existing is None:
+            QuoteLike.create(quote=quote.id, user=user_id)
+            liked_now = True
+        else:
+            existing.delete_instance()
+            liked_now = False
+        count = QuoteLike.select().where(QuoteLike.quote == quote.id).count()
+    return liked_now, count
