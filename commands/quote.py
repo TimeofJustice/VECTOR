@@ -15,6 +15,7 @@ from services.quotes import (
     random_quote,
     random_quote_for_user,
 )
+from utils.images import dominant_color_form_asset
 
 
 class QuoteModal(discord.ui.Modal):
@@ -53,9 +54,7 @@ class QuoteModal(discord.ui.Modal):
         t = user_translator(interaction)
         year = self.year_input.value.strip()
         if not year.isdigit():
-            await interaction.response.send_message(
-                t("quote.year_must_be_number"), ephemeral=True
-            )
+            await interaction.response.send_message(t("quote.year_must_be_number"), ephemeral=True)
             return
 
         item = add_quote(
@@ -65,9 +64,7 @@ class QuoteModal(discord.ui.Modal):
             quote=self.quote_input.value,
             year=int(year),
         )
-        await interaction.response.send_message(
-            t("quote.added", number=item.number), ephemeral=True
-        )
+        await interaction.response.send_message(t("quote.added", number=item.number), ephemeral=True)
 
 
 async def _send_quote_embed(ctx, quote, t) -> None:
@@ -89,9 +86,17 @@ async def _send_quote_embed(ctx, quote, t) -> None:
             except discord.HTTPException:
                 author = None
 
+    color = discord.Color.random()
+    if quoted and quoted.display_avatar:
+        try:
+            color_rgb = await dominant_color_form_asset(quoted.display_avatar)
+            color = discord.Color.from_rgb(*color_rgb)
+        except Exception:
+            pass
+
     embed = discord.Embed(
         description=f'"{quote.quote}" - {quote.year}',
-        colour=discord.Colour.random(),
+        colour=color,
     )
     if quoted is not None:
         icon = quoted.display_avatar.url if quoted.display_avatar else None
@@ -100,9 +105,7 @@ async def _send_quote_embed(ctx, quote, t) -> None:
         embed.set_author(name=t("quote.unknown_user"))
 
     if author is not None:
-        embed.set_footer(
-            text=t("quote.footer", number=quote.number, author=author.display_name)
-        )
+        embed.set_footer(text=t("quote.footer", number=quote.number, author=author.display_name))
     else:
         embed.set_footer(text=t("quote.footer_unknown_author", number=quote.number))
 
@@ -199,9 +202,7 @@ def register_quote_commands(bot: discord.Bot, settings: Settings) -> None:
         guild_only=True,
     )
     @with_translator
-    async def quote_this(
-        ctx: discord.ApplicationContext, message: discord.Message, *, t
-    ):
+    async def quote_this(ctx: discord.ApplicationContext, message: discord.Message, *, t):
         if message.author.bot:
             await ctx.respond(t("quote.no_bots"), ephemeral=True)
             return
@@ -219,9 +220,7 @@ def register_quote_commands(bot: discord.Bot, settings: Settings) -> None:
         guild_only=True,
     )
     @with_translator
-    async def add_quote_user(
-        ctx: discord.ApplicationContext, member: discord.Member, *, t
-    ):
+    async def add_quote_user(ctx: discord.ApplicationContext, member: discord.Member, *, t):
         if member.bot:
             await ctx.respond(t("quote.no_bots"), ephemeral=True)
             return
@@ -233,14 +232,10 @@ def register_quote_commands(bot: discord.Bot, settings: Settings) -> None:
         guild_only=True,
     )
     @with_translator
-    async def get_quote_user(
-        ctx: discord.ApplicationContext, member: discord.Member, *, t, tg
-    ):
+    async def get_quote_user(ctx: discord.ApplicationContext, member: discord.Member, *, t, tg):
         quote = random_quote_for_user(ctx.guild_id, member.id)
         if quote is None:
-            await ctx.respond(
-                t("quote.none_for_user", user=member.display_name), ephemeral=True
-            )
+            await ctx.respond(t("quote.none_for_user", user=member.display_name), ephemeral=True)
             return
 
         await _send_quote_embed(ctx, quote, tg)
