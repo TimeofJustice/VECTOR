@@ -24,6 +24,7 @@ from services.quotes import (
     random_quote,
     random_quote_for_user,
     toggle_like,
+    update_quote,
 )
 from utils.images import dominant_color_form_asset
 
@@ -32,6 +33,22 @@ from utils.images import dominant_color_form_asset
 # to even after a bot restart (when only the message itself survives).
 _FOOTER_NUMBER = re.compile(r"#(\d+)")
 _LIKE_CUSTOM_ID = "quote:like"
+
+
+def _quote_from_message(guild_id: int, message: discord.Message):
+    """Resolve the quote a bot-sent quote message refers to, via its footer number.
+
+    Returns the Quote, or None if the message isn't a quote embed from this bot.
+    """
+    if not message.embeds:
+        return None
+    footer = message.embeds[0].footer
+    if not footer or not footer.text:
+        return None
+    match = _FOOTER_NUMBER.search(footer.text)
+    if match is None:
+        return None
+    return get_quote(guild_id, int(match.group(1)))
 
 
 class QuoteModal(discord.ui.Modal):
@@ -84,6 +101,77 @@ class QuoteModal(discord.ui.Modal):
         )
         await interaction.response.send_message(
             t("quote.added", number=item.number), ephemeral=True
+        )
+
+
+class QuoteEditModal(discord.ui.Modal):
+    """Edit an existing quote's text and year, prefilled with its current values."""
+
+    def __init__(
+        self,
+        number: int,
+        t,
+        *,
+        prefill_quote: str = "",
+        prefill_year: str = "",
+        message: discord.Message | None = None,
+    ):
+        self._number = number
+        self._message = message
+        super().__init__(title=t("quote.edit_modal_title"))
+        self.quote_input = discord.ui.InputText(
+            label=t("quote.modal_quote_label"),
+            style=discord.InputTextStyle.paragraph,
+            placeholder=t("quote.modal_quote_placeholder"),
+            value=prefill_quote or None,
+            required=True,
+        )
+        self.add_item(self.quote_input)
+        self.year_input = discord.ui.InputText(
+            label=t("quote.modal_year_label"),
+            style=discord.InputTextStyle.short,
+            placeholder=t("quote.modal_year_placeholder"),
+            value=prefill_year or None,
+            required=True,
+            min_length=4,
+            max_length=4,
+        )
+        self.add_item(self.year_input)
+
+    async def callback(self, interaction: discord.Interaction):
+        t = user_translator(interaction)
+        year = self.year_input.value.strip()
+        if not year.isdigit():
+            await interaction.response.send_message(
+                t("quote.year_must_be_number"), ephemeral=True
+            )
+            return
+
+        quote = update_quote(
+            guild_id=interaction.guild_id,
+            number=self._number,
+            quote=self.quote_input.value,
+            year=int(year),
+        )
+        if quote is None:
+            await interaction.response.send_message(
+                t("quote.not_found", number=self._number), ephemeral=True
+            )
+            return
+
+        # Refresh the original quote message so the edit is visible immediately.
+        if self._message is not None:
+            try:
+                tg = await guild_translator(interaction)
+                embed = await build_quote_embed(interaction.guild, quote, tg)
+                await self._message.edit(
+                    embed=embed, view=QuoteLikeView(like_count(quote))
+                )
+            except discord.HTTPException:
+                pass
+
+        await interaction.response.send_message(
+            t("quote.edited", number=self._number), ephemeral=True
         )
 
 
@@ -308,6 +396,64 @@ def register_quote_commands(bot: discord.Bot, settings: Settings) -> None:
                 prefill_year=str(message.created_at.year),
             )
         )
+
+    @bot.message_command(
+        **named("commands.quote.edit_command_name"),
+        guild_only=True,
+    )
+    @with_translator
+    async def edit_quote_message(
+        ctx: discord.ApplicationContext, message: discord.Message, *, t
+    ):
+        quote = _quote_from_message(ctx.guild_id, message)
+        if quote is None:
+            await ctx.respond(t("quote.not_a_quote"), ephemeral=True)
+            return
+
+        is_author = quote.author == ctx.author.id
+        is_admin = ctx.author.guild_permissions.administrator
+        if not (is_author or is_admin):
+            await ctx.respond(t("quote.edit_not_allowed"), ephemeral=True)
+            return
+
+        await ctx.send_modal(
+            QuoteEditModal(
+                quote.number,
+                t,
+                prefill_quote=quote.quote,
+                prefill_year=str(quote.year),
+                message=message,
+            )
+        )
+
+    @bot.message_command(
+        **named("commands.quote.delete_command_name"),
+        guild_only=True,
+    )
+    @with_translator
+    async def delete_quote_message(
+        ctx: discord.ApplicationContext, message: discord.Message, *, t
+    ):
+        quote = _quote_from_message(ctx.guild_id, message)
+        if quote is None:
+            await ctx.respond(t("quote.not_a_quote"), ephemeral=True)
+            return
+
+        is_author = quote.author == ctx.author.id
+        is_admin = ctx.author.guild_permissions.administrator
+        if not (is_author or is_admin):
+            await ctx.respond(t("quote.not_allowed"), ephemeral=True)
+            return
+
+        delete_quote(ctx.guild_id, quote.number)
+
+        # Remove the original quote message too, if the bot can.
+        try:
+            await message.delete()
+        except discord.HTTPException:
+            pass
+
+        await ctx.respond(t("quote.removed", number=quote.number), ephemeral=True)
 
     @bot.user_command(
         **named("commands.quote.user_command_name"),

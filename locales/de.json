@@ -32,6 +32,8 @@
         "user": "Wer es gesagt hat"
       },
       "message_command_name": "Zitieren",
+      "edit_command_name": "Zitat bearbeiten",
+      "delete_command_name": "Zitat löschen",
       "user_command_name": "Zitat hinzufügen",
       "get_user_command_name": "Zufallszitat anzeigen"
     }
@@ -74,12 +76,15 @@
   },
   "quote": {
     "modal_title": "Zitat",
+    "edit_modal_title": "Zitat bearbeiten",
     "modal_quote_label": "Zitat",
     "modal_quote_placeholder": "Wie lautet das Zitat?",
     "modal_year_label": "Jahr",
     "modal_year_placeholder": "Aus welchem Jahr?",
     "added": "✅ Zitat hinzugefügt: `#{number}`",
+    "edited": "✏️ Zitat #{number} aktualisiert",
     "removed": "🗑️ Zitat #{number} entfernt",
+    "not_a_quote": "❓ Diese Nachricht ist kein Zitat",
     "not_found": "❓ Zitat #{number} existiert nicht",
     "not_found_generic": "❓ Dieses Zitat existiert nicht mehr",
     "none_yet": "😶 Es gibt noch keine Zitate",
@@ -87,6 +92,7 @@
     "year_must_be_number": "⚠️ Das Jahr muss eine Zahl sein",
     "no_bots": "🤖 Bots können nicht zitiert werden",
     "not_allowed": "⛔ Nur wer das Zitat hinzugefügt hat, oder ein Admin kann es entfernen",
+    "edit_not_allowed": "⛔ Nur wer das Zitat hinzugefügt hat, oder ein Admin kann es bearbeiten",
     "unknown_user": "Unbekannter Nutzer",
     "footer": "#{number} hinzugefügt von {author} • 👁️ {views}",
     "footer_unknown_author": "#{number} hinzugefügt von Unbekanntem Nutzer • 👁️ {views}"

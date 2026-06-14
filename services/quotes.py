@@ -54,6 +54,17 @@ def random_quote_for_user(guild_id: int, user_id: int) -> Quote | None:
     )
 
 
+def update_quote(guild_id: int, number: int, quote: str, year: int) -> Quote | None:
+    """Update an existing quote's text and year. Returns the row, or None if absent."""
+    item = get_quote(guild_id, number)
+    if item is None:
+        return None
+    item.quote = quote
+    item.year = year
+    item.save()
+    return item
+
+
 def delete_quote(guild_id: int, number: int) -> bool:
     """Delete a quote. Returns True if a row was removed."""
     deleted = (

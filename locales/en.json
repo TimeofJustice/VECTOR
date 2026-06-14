@@ -32,6 +32,8 @@
         "user": "Who said it"
       },
       "message_command_name": "Quote this",
+      "edit_command_name": "Edit Quote",
+      "delete_command_name": "Delete Quote",
       "user_command_name": "Add Quote",
       "get_user_command_name": "Show Random Quote"
     }
@@ -74,12 +76,15 @@
   },
   "quote": {
     "modal_title": "Quote",
+    "edit_modal_title": "Edit Quote",
     "modal_quote_label": "Quote",
     "modal_quote_placeholder": "What's the quote?",
     "modal_year_label": "Year",
     "modal_year_placeholder": "What's the year?",
     "added": "✅ Quote added: `#{number}`",
+    "edited": "✏️ Quote #{number} updated",
     "removed": "🗑️ Quote #{number} removed",
+    "not_a_quote": "❓ That message isn't a quote",
     "not_found": "❓ Quote #{number} does not exist",
     "not_found_generic": "❓ That quote no longer exists",
     "none_yet": "😶 There are no quotes yet",
@@ -87,6 +92,7 @@
     "year_must_be_number": "⚠️ The year must be a number",
     "no_bots": "🤖 Bots can't be quoted",
     "not_allowed": "⛔ Only the person who added this quote, or an admin, can remove it",
+    "edit_not_allowed": "⛔ Only the person who added this quote, or an admin, can edit it",
     "unknown_user": "Unknown User",
     "footer": "#{number} added by {author} • 👁️ {views}",
     "footer_unknown_author": "#{number} added by Unknown User • 👁️ {views}"
