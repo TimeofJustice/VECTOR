@@ -15,6 +15,9 @@ def build(settings: Settings) -> discord.Bot:
     """Build and return a configured instance of the Discord bot."""
     intents = discord.Intents.default()
     intents.message_content = True
+    # Needed to list a channel's members for the poll tracker's "pending" list.
+    # Requires the "Server Members Intent" toggle in the Discord Developer Portal.
+    intents.members = True
 
     bot = discord.Bot(intents=intents)
 

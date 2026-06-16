@@ -22,6 +22,11 @@ unfixable = ["B"]
 "__init__.py" = ["E402"]
 "**/{tests,docs,tools}/*" = ["E402"]
 
+# 5. Treat py-cord slash-command descriptors as immutable so B008 doesn't flag
+#    `discord.Option(...)`/`describe(...)` used in argument defaults (idiomatic py-cord).
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["discord.Option", "services.i18n.describe"]
+
 [tool.ruff.format]
-# 5. Use double quote
+# 6. Use double quote
 quote-style = "double"

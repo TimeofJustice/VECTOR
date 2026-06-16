@@ -143,14 +143,23 @@ def _get_language(guild_id):
     return get_language(guild_id)
 
 
-async def guild_translator(ctx) -> Callable[..., str]:
-    """Translator bound to the guild's admin-set language (public surfaces)."""
-    locale = _get_language(getattr(ctx, "guild_id", None))
+def guild_language_translator(guild_id: int | None) -> Callable[..., str]:
+    """Translator bound to a guild's admin-set language, by guild id.
+
+    The synchronous counterpart of :func:`guild_translator`, for code that has a
+    guild id but no command context (background tasks, raw event handlers).
+    """
+    locale = _get_language(guild_id)
 
     def t(key: str, **kwargs) -> str:
         return translate(key, locale, **kwargs)
 
     return t
+
+
+async def guild_translator(ctx) -> Callable[..., str]:
+    """Translator bound to the guild's admin-set language (public surfaces)."""
+    return guild_language_translator(getattr(ctx, "guild_id", None))
 
 
 # Keyword-only parameter names the decorator below knows how to inject, mapped

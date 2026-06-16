@@ -13,4 +13,6 @@ from registration import models
 class GuildSettings(ModelBase):
     guild_id = BigIntegerField(primary_key=True)
     language = CharField(max_length=5, default="en")
+    news_category_id = BigIntegerField(null=True)
+    news_channel_id = BigIntegerField(null=True)
     updated_at = DateTimeField(default=datetime.now)
