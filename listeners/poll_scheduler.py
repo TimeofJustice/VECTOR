@@ -17,6 +17,7 @@ from services.polls import (
     due_polls,
     due_reminders,
     effective_duration_hours,
+    end_of_day,
     get_poll_by_id,
     mark_reminder_sent,
     prune_posts,
@@ -28,11 +29,9 @@ logger = logging.getLogger(__name__)
 _TICK_SECONDS = 60
 # Drop tracking records well after their polls have closed (max poll life is 32d).
 _POST_RETENTION_DAYS = 35
-# How far ahead of a poll's close the pending-voter reminder goes out.
-_REMINDER_LEAD = timedelta(days=1)
 # Don't DM reminders during these night hours (server local time)
 _QUIET_START_HOUR = 20  # inclusive
-_QUIET_END_HOUR = 10  # exclusive
+_QUIET_END_HOUR = 14  # exclusive
 
 
 def _in_quiet_hours(now: datetime) -> bool:
@@ -76,7 +75,9 @@ async def _send_due_reminders(bot: discord.Bot, now: datetime) -> None:
     if _in_quiet_hours(now):
         return
 
-    for post in due_reminders(now, _REMINDER_LEAD):
+    # Remind on the day *before* a poll closes
+    until = end_of_day(now.date() + timedelta(days=1))
+    for post in due_reminders(now, until):
         poll = get_poll_by_id(post.recurring_poll_id)
         if poll is not None and poll.remind:
             try:

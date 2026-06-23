@@ -276,14 +276,14 @@ def prune_posts(older_than: datetime) -> int:
     return PollPost.delete().where(PollPost.created_at < older_than).execute()
 
 
-def due_reminders(now: datetime, within: timedelta) -> list[PollPost]:
-    """Posts still open whose close is within ``within`` and not yet reminded."""
+def due_reminders(now: datetime, until: datetime) -> list[PollPost]:
+    """Posts still open that close by ``until`` and haven't been reminded yet."""
     return list(
         PollPost.select().where(
             (PollPost.reminder_sent == False)  # noqa: E712 (peewee needs ==)
             & (PollPost.closes_at.is_null(False))
             & (PollPost.closes_at > now)
-            & (PollPost.closes_at <= now + within)
+            & (PollPost.closes_at <= until)
         )
     )
 
