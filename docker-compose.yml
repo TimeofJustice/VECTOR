@@ -35,6 +35,7 @@ services:
       - .env
     environment:
       REDIS_URL: redis://redis:6379
+      TZ: ${TZ:-Europe/Berlin}
     depends_on:
       - db
       - redis
@@ -51,6 +52,7 @@ services:
       - .env
     environment:
       REDIS_URL: redis://redis:6379
+      TZ: ${TZ:-Europe/Berlin}
     depends_on:
       - db
       - redis
